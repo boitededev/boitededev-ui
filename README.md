@@ -1,13 +1,12 @@
 # Boite de Dev UI
 
-Mini framework CSS + controllers [Stimulus](https://stimulus.hotwired.dev/),
-**sans dépendance et sans build**. Un fichier CSS, quelques fichiers JS, une doc.
+Mini framework CSS avec des controllers [Stimulus](https://stimulus.hotwired.dev/),
+sans build : un fichier CSS, quelques fichiers JS et une doc. Le CSS fonctionne seul ;
+les controllers ont besoin de Stimulus, que le projet doit fournir.
 
-Utilisable dans n'importe quel projet : Go, PHP, Python, HTML simple…
+Il s'utilise dans n'importe quel projet : Go, PHP, Python, HTML simple…
 
-📖 **Documentation :** https://boitededev.github.io/boitededev-ui/docs.html
-
----
+Documentation : https://boitededev.github.io/boitededev-ui/docs.html
 
 ## Sommaire
 
@@ -17,8 +16,6 @@ Utilisable dans n'importe quel projet : Go, PHP, Python, HTML simple…
 - [Personnaliser le thème](#personnaliser-le-thème)
 - [Versions](#versions)
 - [Contribuer](#contribuer)
-
----
 
 ## Installation
 
@@ -34,7 +31,7 @@ changera pas tout seul le jour où une nouvelle version sort.
 
 ### Avec les controllers JS
 
-Le kit **n'embarque pas Stimulus** : c'est le projet qui le fournit. Comme ça, il n'y a
+Le kit n'embarque pas Stimulus, c'est le projet qui le fournit. Comme ça, il n'y a
 jamais deux versions de Stimulus chargées en même temps.
 
 ```html
@@ -71,12 +68,10 @@ import { ModalController } from "boitededev-ui"
 app.register("popup", ModalController)
 ```
 
----
-
 ## Exemples par langage
 
-C'est **le même HTML partout** : seule la façon d'écrire la version change.
-L'idée est de mettre le numéro de version à **un seul endroit** du projet.
+Le HTML est le même partout, seule la façon d'écrire la version change.
+L'idée est de mettre le numéro de version à un seul endroit du projet.
 
 ### Go (templ)
 
@@ -108,8 +103,6 @@ app.jinja_env.globals["ui_version"] = "v1.1.0"   # Flask
 
 Pour l'importmap, même principe : remplacer `v1.1.0` par la variable.
 
----
-
 ## Composants
 
 Tous les exemples sont dans la [documentation](https://boitededev.github.io/boitededev-ui/docs.html).
@@ -129,12 +122,10 @@ Tous les exemples sont dans la [documentation](https://boitededev.github.io/boit
 | Modal          | `.modal`, `.modal-header/body/footer`, `.modal-sm/lg` | `modal` |
 | Progress       | `.progress`, `.progress-field`, `.progress-label`, `.progress-sm/lg`, `.progress-success/warning/danger` | — |
 
----
-
 ## Personnaliser le thème
 
-Toutes les valeurs (couleurs, espacements, rayons…) sont des **variables CSS** sur `:root`.
-Pour changer le thème d'un projet, il suffit de les redéfinir **après** le kit :
+Toutes les valeurs (couleurs, espacements, rayons…) sont des variables CSS sur `:root`.
+Pour changer le thème d'un projet, on les redéfinit après avoir chargé le kit :
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.1.0/css/style.css">
@@ -148,17 +139,15 @@ Pour changer le thème d'un projet, il suffit de les redéfinir **après** le ki
 
 On peut aussi le faire sur un seul bloc : `<div style="--sky: #16a34a">…</div>`.
 
----
-
 ## Versions
 
 Les versions suivent la règle [semver](https://semver.org/lang/fr/) : `MAJEURE.MINEURE.CORRECTIF`.
 
 | Changement                                         | Exemple            | Les projets doivent… |
 |----------------------------------------------------|--------------------|----------------------|
-| **Correctif** : bug corrigé, rien ne change à l'usage | `1.0.0` → `1.0.1` | rien, mettre à jour sans risque |
-| **Mineure** : nouveau composant, token, icône       | `1.0.1` → `1.1.0` | rien, mettre à jour sans risque |
-| **Majeure** : classe ou token renommé / supprimé    | `1.1.0` → `2.0.0` | lire le CHANGELOG et adapter leur code |
+| Correctif : bug corrigé, rien ne change à l'usage | `1.0.0` → `1.0.1` | rien, mettre à jour sans risque |
+| Mineure : nouveau composant, token, icône       | `1.0.1` → `1.1.0` | rien, mettre à jour sans risque |
+| Majeure : classe ou token renommé / supprimé    | `1.1.0` → `2.0.0` | lire le CHANGELOG et adapter leur code |
 
 Le détail de chaque version est dans le [CHANGELOG](CHANGELOG.md).
 
@@ -173,8 +162,6 @@ Le détail de chaque version est dans le [CHANGELOG](CHANGELOG.md).
    ```
 
 Un tag publié ne doit **jamais** être modifié ou supprimé : des projets l'utilisent peut-être déjà.
-
----
 
 ## Contribuer
 
@@ -191,17 +178,17 @@ Puis ouvrir http://localhost:8000/docs.html
 
 ### Règles
 
-- **Tokens obligatoires** : valeurs via les variables (`--sp-*`, `--radius*`, couleurs…), pas de valeurs en dur.
-- **Doc toujours à jour** : tout nouveau composant, utilitaire ou token est documenté dans `docs.html` :
-  - une `<section class="doc-section" id="…">` avec exemples `.doc-example > .doc-demo`
+- Toutes les valeurs passent par les tokens (`--sp-*`, `--radius*`, couleurs…), jamais de valeur en dur.
+- La doc reste à jour : tout nouveau composant, utilitaire ou token est documenté dans `docs.html`, avec
+  - une `<section class="doc-section" id="…">` contenant des exemples `.doc-example > .doc-demo`
     (le code affiché sous la démo est généré automatiquement depuis son HTML) ;
   - un lien dans le sommaire `.doc-toc` ;
   - une ligne dans le sommaire en tête de `css/style.css` si c'est une nouvelle section.
-- **Classes de la doc** préfixées `.doc-` et gardées dans le `<style>` de `docs.html`.
-- **Langue** : commentaires du CSS en anglais ; textes de la doc en français.
-- **Icônes** : `<span class="icon icon-nom" aria-hidden="true"></span>`, SVG au trait 24×24
-  (stroke 2, bouts arrondis) en `mask`, couleur = `currentColor`. Une nouvelle icône est
-  aussi ajoutée à la liste `data-icons` de `docs.html` et à la liste en commentaire du CSS.
-- **Controllers JS** : un fichier par controller dans `js/controllers/`, enregistré dans
-  `registerControllers()` de `js/index.js`, et ajouté au tableau [Composants](#composants).
-- **Stimulus** n'est jamais embarqué dans le kit.
+- Les classes propres à la doc sont préfixées `.doc-` et restent dans le `<style>` de `docs.html`.
+- Les commentaires du CSS sont en anglais, les textes de la doc en français.
+- Une icône s'écrit `<span class="icon icon-nom" aria-hidden="true"></span>`. C'est un SVG au trait 24×24
+  (stroke 2, bouts arrondis) appliqué en `mask`, dont la couleur vient de `currentColor`. Chaque nouvelle
+  icône est aussi ajoutée à la liste `data-icons` de `docs.html` et à la liste en commentaire du CSS.
+- Chaque controller JS a son propre fichier dans `js/controllers/`. Il est enregistré dans
+  `registerControllers()` de `js/index.js` et ajouté au tableau [Composants](#composants).
+- Stimulus n'est jamais embarqué dans le kit.
