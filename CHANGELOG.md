@@ -3,6 +3,13 @@
 Toutes les évolutions du kit, de la plus récente à la plus ancienne.
 Numérotation : voir la section « Versions » du [README](README.md#versions).
 
+## [1.1.0] — 2026-11-23
+
+### Ajouté
+- Composant Progress : `<progress class="progress">` natif, sans JS. Couleurs
+  (`.progress-success/warning/danger`), tailles (`.progress-sm/lg`), état
+  indéterminé animé, libellé + valeur (`.progress-field`, `.progress-label`).
+
 ## [1.0.0] — 2026-11-23
 
 Première version, extraite du dashboard Boite de Dev.

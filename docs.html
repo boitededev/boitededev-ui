@@ -238,6 +238,7 @@
       <a href="#accordeon">Accordéon</a>
       <a href="#icones">Icônes</a>
       <a href="#modal">Modal</a>
+      <a href="#progress">Progress</a>
       <strong>Outils</strong>
       <a href="#utilitaires">Utilitaires</a>
       <a href="#a11y">Accessibilité</a>
@@ -259,7 +260,7 @@
         <h3>Installation : CSS seul</h3>
         <div class="doc-example">
           <div class="doc-code" data-raw>
-            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.0.0/css/style.css"&gt;</pre>
+            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.1.0/css/style.css"&gt;</pre>
           </div>
         </div>
 
@@ -274,7 +275,7 @@
 {
   "imports": {
     "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js",
-    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.0.0/js/index.js"
+    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.1.0/js/index.js"
   }
 }
 &lt;/script&gt;
@@ -909,6 +910,79 @@
           <code>.modal-lg</code> (<code>--modal-w-lg</code>, 800px). Sur mobile, la modal prend toute la largeur
           moins la gouttière. Le fond utilise le token <code>--overlay</code>.
         </p>
+      </section>
+
+      <!-- ================================================= PROGRESS -->
+      <section class="doc-section" id="progress">
+        <h2>Progress</h2>
+        <p class="text-muted">
+          Basée sur la balise native <code>&lt;progress&gt;</code> : aucun JS, et les lecteurs d'écran
+          annoncent la valeur. Le texte entre les balises sert de secours.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<progress class="progress" value="60" max="100">60 %</progress>
+          </div>
+        </div>
+
+        <h3>Avec libellé et valeur</h3>
+        <p class="text-muted">
+          <code>.progress-field</code> regroupe la barre et sa ligne <code>.progress-label</code>
+          (nom à gauche, valeur à droite).
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack">
+  <div class="progress-field">
+    <div class="progress-label"><span>Objectif du mois</span><span>4 200 / 6 000 €</span></div>
+    <progress class="progress" value="4200" max="6000">70 %</progress>
+  </div>
+  <div class="progress-field">
+    <div class="progress-label"><span>Prospects relancés</span><span>18 / 20</span></div>
+    <progress class="progress progress-success" value="18" max="20">90 %</progress>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <h3>Couleurs</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack">
+  <progress class="progress" value="50" max="100">50 %</progress>
+  <progress class="progress progress-success" value="80" max="100">80 %</progress>
+  <progress class="progress progress-warning" value="40" max="100">40 %</progress>
+  <progress class="progress progress-danger" value="15" max="100">15 %</progress>
+</div>
+          </div>
+        </div>
+
+        <h3>Tailles</h3>
+        <p class="text-muted">
+          <code>.progress-sm</code> (<code>--sp-1</code>), par défaut (<code>--sp-2</code>),
+          <code>.progress-lg</code> (<code>--sp-3</code>). Hauteur libre avec
+          <code>--progress-h</code> en style inline.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack">
+  <progress class="progress progress-sm" value="60" max="100">60 %</progress>
+  <progress class="progress" value="60" max="100">60 %</progress>
+  <progress class="progress progress-lg" value="60" max="100">60 %</progress>
+</div>
+          </div>
+        </div>
+
+        <h3>Indéterminée (chargement)</h3>
+        <p class="text-muted">
+          Sans attribut <code>value</code>, la barre est animée : à utiliser quand on ne connaît
+          pas la durée. L'animation est coupée si l'utilisateur a demandé moins de mouvement.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<progress class="progress" aria-label="Chargement en cours">Chargement…</progress>
+          </div>
+        </div>
       </section>
 
       <!-- ================================================= UTILITAIRES -->
