@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BOITE DE DEV UI — v1.1.0
+   BOITE DE DEV UI — v1.2.0
    Mini CSS framework. Docs: docs.html — Changelog: CHANGELOG.md
    --------------------------------------------------------------------------
    Contents
@@ -20,6 +20,11 @@
         5.10 Icons
         5.11 Modal
         5.12 Progress
+        5.13 Toast
+        5.14 Menu (dropdown)
+        5.15 Tabs
+        5.16 Empty state
+        5.17 Pagination
      6. Utilities (spacing, text, colors, display)
      7. Accessibility
      8. Animations & reduced motion
@@ -117,6 +122,12 @@
   --modal-w-sm: 400px;
   --modal-w: 560px;
   --modal-w-lg: 800px;
+
+  /* Toast width */
+  --toast-w: 380px;
+
+  /* Dropdown menu min width */
+  --menu-w: 200px;
 
   /* Transitions */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -412,7 +423,7 @@ code {
 /* --------------------------------------------------------------------------
    5.2 Navbar
    Usage: <header class="navbar"><div class="container">…</div></header>
-   Active link: aria-current="page"
+   Active link: aria-current="page" (or "location" for in-page anchors)
    -------------------------------------------------------------------------- */
 .navbar {
   position: sticky;
@@ -452,7 +463,8 @@ code {
 .navbar a:not(.btn):hover {
   color: var(--sky-deep);
 }
-.navbar a[aria-current="page"] {
+.navbar a[aria-current="page"],
+.navbar a[aria-current="location"] {
   background: var(--sky-soft);
   color: var(--sky-deep);
 }
@@ -1070,6 +1082,383 @@ body:has(.modal[open]) {
 .progress-label > :last-child {
   font-weight: 700;
   color: var(--ink);
+}
+
+
+/* --------------------------------------------------------------------------
+   5.13 Toast (temporary message + Stimulus "toast" controller)
+   Usage:
+     <div id="toasts" class="toasts" aria-live="polite">
+       <div class="toast toast-success" data-controller="toast">
+         <span class="icon icon-check-circle" aria-hidden="true"></span>
+         <p class="toast-body">Saved.</p>
+         <button class="btn btn-ghost btn-icon btn-sm" data-action="toast#close">
+           <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+           <span class="sr-only">Close</span>
+         </button>
+       </div>
+     </div>
+   The .toasts container is fixed at the bottom right (full width on mobile).
+   Put it once in the layout, empty, so screen readers announce what gets added.
+   Closes after 5 s (data-toast-delay-value, 0 = stays). Pauses on hover/focus.
+   Colors: .toast-success, .toast-warning, .toast-danger (default: info)
+   -------------------------------------------------------------------------- */
+.toasts {
+  position: fixed;
+  right: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 90; /* above the navbar, below the skip link */
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: min(var(--toast-w), calc(100% - 2 * var(--gutter)));
+  pointer-events: none; /* the empty space between toasts stays clickable */
+}
+.toasts > * {
+  pointer-events: auto;
+}
+
+.toast {
+  --toast-color: var(--info);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--toast-color);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  font-size: 15px;
+  animation: toastIn var(--t) var(--ease);
+}
+.toast > .icon {
+  margin-top: 6px;
+  color: var(--toast-color);
+}
+.toast-body {
+  flex: 1;
+  margin: 0;
+  padding-block: 6px;
+}
+.toast-body > strong {
+  display: block;
+}
+.toast-success { --toast-color: var(--success); }
+.toast-warning { --toast-color: var(--warning); }
+.toast-danger  { --toast-color: var(--danger); }
+
+/* Added by the controller before removing the toast */
+.toast-leaving {
+  animation: toastOut var(--t-fast) ease-in forwards;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes toastOut {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   5.14 Menu (dropdown: native popover + Stimulus "dropdown" controller)
+   Usage:
+     <div data-controller="dropdown">
+       <button class="btn btn-ghost btn-icon btn-sm" data-dropdown-target="button">
+         <span class="icon icon-more" aria-hidden="true"></span>
+         <span class="sr-only">Actions</span>
+       </button>
+       <div class="menu" popover data-dropdown-target="menu">
+         <a class="menu-item" href="…"><span class="icon icon-edit" aria-hidden="true"></span> Edit</a>
+         <hr class="menu-sep">
+         <button class="menu-item menu-item-danger">…</button>
+       </div>
+     </div>
+   The browser closes it on outside click and Escape. The controller places it
+   under the button (above if there is no room) and handles arrow keys.
+   -------------------------------------------------------------------------- */
+.menu {
+  position: fixed;
+  inset: auto; /* the controller sets top / left */
+  margin: 0;
+  min-width: var(--menu-w);
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: var(--sp-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+}
+.menu:popover-open {
+  display: grid;
+  gap: 2px;
+  animation: menuIn var(--t-fast) var(--ease);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: var(--sky-soft);
+  color: var(--sky-deep);
+}
+.menu-item:focus-visible {
+  outline-width: 2px;
+  outline-offset: -2px; /* stays inside the menu */
+}
+.menu-item > .icon {
+  color: var(--muted);
+}
+.menu-item:hover > .icon,
+.menu-item:focus-visible > .icon {
+  color: inherit;
+}
+.menu-item-danger,
+.menu-item-danger > .icon {
+  color: var(--danger);
+}
+.menu-item-danger:hover,
+.menu-item-danger:focus-visible {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.menu-item:disabled,
+.menu-item[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+/* button_to and other forms inside the menu */
+.menu > form {
+  margin: 0;
+}
+
+.menu-sep {
+  height: 1px;
+  margin: var(--sp-1) calc(-1 * var(--sp-1));
+  border: 0;
+  background: var(--line);
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   5.15 Tabs (Stimulus "tabs" controller)
+   Usage:
+     <div data-controller="tabs">
+       <div class="tabs" role="tablist" aria-label="…">
+         <button class="tab" role="tab" data-tabs-target="tab">Info</button>
+         <button class="tab" role="tab" data-tabs-target="tab">Invoices</button>
+       </div>
+       <div class="tab-panel" role="tabpanel" data-tabs-target="panel">…</div>
+       <div class="tab-panel" role="tabpanel" data-tabs-target="panel" hidden>…</div>
+     </div>
+   Active tab: aria-selected="true" (set by the controller).
+   Tabs that are links to other pages: <nav class="tabs" data-controller="nav">
+   with <a class="tab"> links, active one = aria-current="page".
+   Scrolls horizontally on small screens.
+   -------------------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  gap: var(--sp-1);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: -1px; /* the active border covers the .tabs border */
+  padding: 10px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tab:hover {
+  color: var(--ink);
+}
+.tab[aria-selected="true"],
+.tab[aria-current="page"] {
+  border-bottom-color: var(--sky);
+  color: var(--sky-deep);
+}
+.tab:focus-visible {
+  outline-width: 2px;
+  outline-offset: -2px; /* the .tabs container cuts what overflows */
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tab-panel {
+  padding-top: var(--sp-5);
+}
+.tab-panel[hidden] {
+  display: none;
+}
+.tab-panel:focus-visible {
+  outline-offset: 6px;
+  border-radius: var(--radius-sm);
+}
+
+
+/* --------------------------------------------------------------------------
+   5.16 Empty state (no JS)
+   Usage:
+     <div class="empty">
+       <span class="icon-box"><span class="icon icon-invoice" aria-hidden="true"></span></span>
+       <h3>No invoice yet</h3>
+       <p>Short explanation of what will show up here.</p>
+       <a class="btn btn-primary" href="…">New invoice</a>
+     </div>
+   Every part is optional. .empty-compact: smaller, no border, for a card or a
+   table: <tr><td colspan="4"><div class="empty empty-compact">…</div></td></tr>
+   -------------------------------------------------------------------------- */
+.empty {
+  --empty-icon: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-7) var(--sp-5);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.empty > .icon-box {
+  --icon-box: var(--empty-icon);
+  margin-bottom: var(--sp-2);
+  border-radius: var(--radius);
+  font-size: calc(var(--empty-icon) * 0.43); /* the icon is 1.25em */
+}
+.empty > h2,
+.empty > h3 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.empty > p {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--muted);
+}
+.empty > .btn,
+.empty > .row {
+  margin-top: var(--sp-3);
+}
+
+.empty-compact {
+  --empty-icon: var(--icon-box);
+  padding: var(--sp-5) var(--sp-4);
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5.17 Pagination (no JS)
+   Usage:
+     <nav class="pagination" aria-label="Pagination">
+       <a class="page-link" href="?page=1" rel="prev">
+         <span class="icon icon-chevron-left" aria-hidden="true"></span>
+         <span class="sr-only">Previous page</span>
+       </a>
+       <a class="page-link" href="?page=1">1</a>
+       <a class="page-link" href="?page=2" aria-current="page">2</a>
+       <span class="page-gap">…</span>
+       <a class="page-link" href="?page=9">9</a>
+       <span class="page-link" aria-disabled="true">…next…</span>
+     </nav>
+   Current page: aria-current="page". Missing previous/next: a <span> with
+   aria-disabled="true". With a summary: wrap both in .pagination-bar:
+     <div class="pagination-bar"><p>21–40 of 132</p><nav class="pagination">…</nav></div>
+   -------------------------------------------------------------------------- */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.page-link,
+.page-gap {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--control-sm);
+  height: var(--control-sm);
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.page-link {
+  border-radius: var(--radius-pill);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+a.page-link:hover {
+  background: var(--sky-soft);
+  color: var(--sky-deep);
+}
+.page-link[aria-current="page"] {
+  background: var(--ink);
+  color: var(--white);
+}
+.page-link[aria-disabled="true"] {
+  color: var(--line-strong);
+}
+.page-gap {
+  color: var(--muted);
+}
+
+.pagination-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: var(--sp-4);
+}
+.pagination-bar > p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
 }
 
 

@@ -65,7 +65,8 @@
       color: var(--ink-2);
       text-decoration: none;
     }
-    .doc-toc a:hover { background: var(--sky-soft); color: var(--sky-deep); }
+    .doc-toc a:hover,
+    .doc-toc a[aria-current] { background: var(--sky-soft); color: var(--sky-deep); }
 
     .doc-section {
       padding-bottom: var(--sp-7);
@@ -209,7 +210,7 @@
       <strong style="font-family: var(--display); font-size: 20px">
         Boite de Dev <span class="text-sky">/ UI</span>
       </strong>
-      <nav class="navbar-links" aria-label="Sections">
+      <nav class="navbar-links" aria-label="Sections" data-controller="scrollspy">
         <a href="#tokens">Tokens</a>
         <a href="#layout">Layout</a>
         <a href="#boutons">Composants</a>
@@ -220,7 +221,7 @@
 
   <div class="container doc-layout">
     <!-- Sommaire latéral -->
-    <aside class="doc-toc" aria-label="Sommaire">
+    <aside class="doc-toc" aria-label="Sommaire" data-controller="scrollspy">
       <strong>Fondations</strong>
       <a href="#intro">Introduction</a>
       <a href="#tokens">Tokens</a>
@@ -239,6 +240,11 @@
       <a href="#icones">Icônes</a>
       <a href="#modal">Modal</a>
       <a href="#progress">Progress</a>
+      <a href="#toast">Toast</a>
+      <a href="#menu">Menu déroulant</a>
+      <a href="#onglets">Onglets</a>
+      <a href="#vide">État vide</a>
+      <a href="#pagination">Pagination</a>
       <strong>Outils</strong>
       <a href="#utilitaires">Utilitaires</a>
       <a href="#a11y">Accessibilité</a>
@@ -260,7 +266,7 @@
         <h3>Installation : CSS seul</h3>
         <div class="doc-example">
           <div class="doc-code" data-raw>
-            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.1.0/css/style.css"&gt;</pre>
+            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.2.0/css/style.css"&gt;</pre>
           </div>
         </div>
 
@@ -275,7 +281,7 @@
 {
   "imports": {
     "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js",
-    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.1.0/js/index.js"
+    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.2.0/js/index.js"
   }
 }
 &lt;/script&gt;
@@ -505,6 +511,59 @@
     <a class="btn btn-sm" href="#navbar">Nouveau</a>
   </div>
 </header>
+          </div>
+        </div>
+
+        <h3>Lien actif automatique</h3>
+        <p class="text-muted">
+          Le controller Stimulus <code>nav</code> (<code>js/controllers/nav_controller.js</code>)
+          pose <code>aria-current="page"</code> sur le lien dont l'adresse correspond à la page
+          ouverte. Il cherche les liens dans <code>data-nav-target="links"</code> s'il existe,
+          sinon dans l'élément du controller. <code>/factures</code> et <code>/factures/</code>
+          comptent comme la même page.
+        </p>
+        <p class="text-muted">
+          Par défaut, l'adresse doit correspondre exactement. Avec <code>data-nav-match="prefix"</code>,
+          le lien reste aussi actif sur ses sous-pages : ici, « Prospects » est marqué sur
+          <code>/prospects/12</code>, mais pas sur <code>/prospectsX</code>. Un seul lien est actif
+          à la fois. Une correspondance exacte l'emporte, sinon c'est le préfixe le plus long.
+          Mettre <code>/</code> en préfixe n'a aucun effet, sinon « Accueil » serait actif partout.
+        </p>
+        <p class="text-muted">
+          Le lien actif est recalculé à chaque navigation Turbo et au retour arrière du navigateur,
+          ce qui fonctionne aussi avec une navbar en <code>data-turbo-permanent</code>. Sur mobile,
+          quand les liens défilent, le lien actif est centré dans la barre.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;nav class="navbar-links" data-controller="nav"&gt;
+  &lt;a href="/"&gt;Accueil&lt;/a&gt;
+  &lt;a href="/prospects" data-nav-match="prefix"&gt;Prospects&lt;/a&gt;
+  &lt;a href="/factures" data-nav-match="prefix"&gt;Factures&lt;/a&gt;
+&lt;/nav&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Sommaire qui suit la lecture</h3>
+        <p class="text-muted">
+          Pour une page découpée en sections, le controller <code>scrollspy</code>
+          (<code>js/controllers/scrollspy_controller.js</code>) marque le lien d'ancre de la
+          section en cours de lecture avec <code>aria-current="location"</code>. Le sommaire de
+          gauche et la navbar de cette page l'utilisent : faites défiler pour voir le lien changer.
+        </p>
+        <p class="text-muted">
+          Une section devient active quand son haut passe sous la navbar, à l'endroit où un clic
+          sur le lien l'amène. Pour placer cette ligne ailleurs, indiquez une distance en pixels
+          depuis le haut de la fenêtre avec <code>data-scrollspy-offset-value</code>. En bas de
+          page, la dernière section est active, même si elle est trop courte pour atteindre la ligne.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;nav class="navbar-links" data-controller="scrollspy"&gt;
+  &lt;a href="#intro"&gt;Introduction&lt;/a&gt;
+  &lt;a href="#tarifs"&gt;Tarifs&lt;/a&gt;
+  &lt;a href="#contact"&gt;Contact&lt;/a&gt;
+&lt;/nav&gt;</pre>
           </div>
         </div>
       </section>
@@ -985,6 +1044,396 @@
         </div>
       </section>
 
+      <!-- ================================================= TOAST -->
+      <section class="doc-section" id="toast">
+        <h2>Toast</h2>
+        <p class="text-muted">
+          Message temporaire après une action (« Prospect enregistré »). Le controller Stimulus
+          <code>toast</code> (<code>js/controllers/toast_controller.js</code>) le ferme après
+          5 secondes, ou au clic sur la croix. Le compte à rebours s'arrête tant que la souris
+          est dessus ou que le focus est dedans.
+        </p>
+
+        <div class="row mt-4" data-doc-toasts>
+          <button type="button" class="btn btn-ghost" data-doc-toast="">Info</button>
+          <button type="button" class="btn btn-ghost" data-doc-toast="toast-success">Succès</button>
+          <button type="button" class="btn btn-ghost" data-doc-toast="toast-warning">Attention</button>
+          <button type="button" class="btn btn-ghost" data-doc-toast="toast-danger">Erreur</button>
+        </div>
+
+        <h3>Couleurs</h3>
+        <p class="text-muted">
+          Info par défaut, puis <code>.toast-success</code>, <code>.toast-warning</code> et
+          <code>.toast-danger</code>. Un <code>&lt;strong&gt;</code> dans <code>.toast-body</code>
+          sert de titre. Ici, <code>data-toast-delay-value="0"</code> garde les toasts affichés
+          jusqu'au clic sur la croix. C'est aussi un bon réglage pour une erreur que l'utilisateur
+          doit lire.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack" style="max-width: 380px">
+  <div class="toast" data-controller="toast" data-toast-delay-value="0">
+    <span class="icon icon-info" aria-hidden="true"></span>
+    <p class="toast-body">Une nouvelle version du kit est disponible.</p>
+    <button type="button" class="btn btn-ghost btn-icon btn-sm" data-action="toast#close">
+      <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+      <span class="sr-only">Fermer</span>
+    </button>
+  </div>
+  <div class="toast toast-success" data-controller="toast" data-toast-delay-value="0">
+    <span class="icon icon-check-circle" aria-hidden="true"></span>
+    <p class="toast-body">Prospect enregistré.</p>
+    <button type="button" class="btn btn-ghost btn-icon btn-sm" data-action="toast#close">
+      <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+      <span class="sr-only">Fermer</span>
+    </button>
+  </div>
+  <div class="toast toast-warning" data-controller="toast" data-toast-delay-value="0">
+    <span class="icon icon-alert" aria-hidden="true"></span>
+    <p class="toast-body"><strong>Facture en retard</strong>Boulangerie Martin, échue depuis 12 jours.</p>
+    <button type="button" class="btn btn-ghost btn-icon btn-sm" data-action="toast#close">
+      <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+      <span class="sr-only">Fermer</span>
+    </button>
+  </div>
+  <div class="toast toast-danger" data-controller="toast" data-toast-delay-value="0">
+    <span class="icon icon-x-circle" aria-hidden="true"></span>
+    <p class="toast-body">L'envoi du devis a échoué.</p>
+    <button type="button" class="btn btn-ghost btn-icon btn-sm" data-action="toast#close">
+      <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+      <span class="sr-only">Fermer</span>
+    </button>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <h3>Conteneur</h3>
+        <p class="text-muted">
+          Le conteneur <code>.toasts</code> se place une seule fois dans le layout, en bas à
+          droite de l'écran (sur toute la largeur sur mobile). Il doit être présent dès le
+          chargement, même vide : les lecteurs d'écran n'annoncent que ce qui est ajouté dans une
+          zone <code>aria-live</code> déjà en place. Les messages flash du serveur peuvent être
+          rendus directement dedans.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;div id="toasts" class="toasts" aria-live="polite"&gt;&lt;/div&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Avec Turbo Streams</h3>
+        <p class="text-muted">
+          Le serveur ajoute un toast dans <code>#toasts</code>, et le controller se lance dès
+          qu'il apparaît. Avec Turbo, les toasts sont retirés avant la mise en cache de la page,
+          donc ils ne réapparaissent pas au retour arrière.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;turbo-stream action="append" target="toasts"&gt;
+  &lt;template&gt;
+    &lt;div class="toast toast-success" data-controller="toast"&gt;
+      …
+    &lt;/div&gt;
+  &lt;/template&gt;
+&lt;/turbo-stream&gt;</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= MENU -->
+      <section class="doc-section" id="menu">
+        <h2>Menu déroulant</h2>
+        <p class="text-muted">
+          Basé sur l'attribut natif <code>popover</code> : le navigateur ferme le menu au clic
+          à l'extérieur ou avec Échap, et rend le focus au bouton. Le menu s'affiche au-dessus
+          de tout, même dans un <code>.table-wrap</code> qui coupe ce qui dépasse. Le controller
+          Stimulus <code>dropdown</code> (<code>js/controllers/dropdown_controller.js</code>)
+          relie le bouton au menu sans id, le place sous le bouton et gère les flèches du clavier.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Prospect</th>
+        <th>Statut</th>
+        <th class="num">Budget</th>
+        <th class="num"><span class="sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Boulangerie Martin</td>
+        <td><span class="badge badge-success badge-dot">Signé</span></td>
+        <td class="num">1 500 €</td>
+        <td class="num">
+          <div data-controller="dropdown">
+            <button type="button" class="btn btn-ghost btn-icon btn-sm" data-dropdown-target="button">
+              <span class="icon icon-more" aria-hidden="true"></span>
+              <span class="sr-only">Actions pour Boulangerie Martin</span>
+            </button>
+            <div class="menu" popover data-dropdown-target="menu">
+              <button type="button" class="menu-item"><span class="icon icon-edit" aria-hidden="true"></span> Modifier</button>
+              <button type="button" class="menu-item"><span class="icon icon-copy" aria-hidden="true"></span> Dupliquer</button>
+              <button type="button" class="menu-item"><span class="icon icon-send" aria-hidden="true"></span> Envoyer le devis</button>
+              <hr class="menu-sep">
+              <button type="button" class="menu-item menu-item-danger"><span class="icon icon-trash" aria-hidden="true"></span> Supprimer</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Garage Dupont</td>
+        <td><span class="badge badge-warning badge-dot">À relancer</span></td>
+        <td class="num">2 400 €</td>
+        <td class="num">
+          <div data-controller="dropdown">
+            <button type="button" class="btn btn-ghost btn-icon btn-sm" data-dropdown-target="button">
+              <span class="icon icon-more" aria-hidden="true"></span>
+              <span class="sr-only">Actions pour Garage Dupont</span>
+            </button>
+            <div class="menu" popover data-dropdown-target="menu">
+              <button type="button" class="menu-item"><span class="icon icon-edit" aria-hidden="true"></span> Modifier</button>
+              <button type="button" class="menu-item"><span class="icon icon-copy" aria-hidden="true"></span> Dupliquer</button>
+              <button type="button" class="menu-item"><span class="icon icon-send" aria-hidden="true"></span> Envoyer le devis</button>
+              <hr class="menu-sep">
+              <button type="button" class="menu-item menu-item-danger"><span class="icon icon-trash" aria-hidden="true"></span> Supprimer</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+          </div>
+        </div>
+
+        <h3>Éléments</h3>
+        <p class="text-muted">
+          Un <code>.menu-item</code> peut être un <code>&lt;a&gt;</code> ou un
+          <code>&lt;button&gt;</code>, y compris dans un formulaire (comme celui de
+          <code>button_to</code>). Un clic sur un élément ferme le menu. <code>.menu-item-danger</code>
+          colore une action destructrice, <code>&lt;hr class="menu-sep"&gt;</code> sépare deux groupes,
+          et un élément <code>disabled</code> est grisé et sauté par les flèches.
+        </p>
+
+        <h3>Position</h3>
+        <p class="text-muted">
+          Le menu s'aligne sur le bord droit du bouton, ce qui convient à un bouton en bout de
+          ligne. Avec <code>data-dropdown-align-value="start"</code> sur l'élément du controller,
+          il s'aligne à gauche. Il s'ouvre vers le haut quand il manque de place en bas, reste
+          dans la fenêtre et suit le bouton si la page défile.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div data-controller="dropdown" data-dropdown-align-value="start">
+  <button type="button" class="btn btn-ghost" data-dropdown-target="button">
+    Exporter <span class="icon icon-chevron-down icon-sm" aria-hidden="true"></span>
+  </button>
+  <div class="menu" popover data-dropdown-target="menu">
+    <button type="button" class="menu-item"><span class="icon icon-file" aria-hidden="true"></span> PDF</button>
+    <button type="button" class="menu-item"><span class="icon icon-download" aria-hidden="true"></span> CSV</button>
+    <button type="button" class="menu-item" disabled><span class="icon icon-download" aria-hidden="true"></span> Excel (bientôt)</button>
+  </div>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= ONGLETS -->
+      <section class="doc-section" id="onglets">
+        <h2>Onglets</h2>
+        <p class="text-muted">
+          Le controller Stimulus <code>tabs</code> (<code>js/controllers/tabs_controller.js</code>)
+          relie le n-ième onglet au n-ième panneau et pose les attributs ARIA. Au clavier, les
+          flèches gauche et droite changent d'onglet, Début et Fin vont au premier et au dernier,
+          et Tab passe au contenu du panneau.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div data-controller="tabs">
+  <div class="tabs" role="tablist" aria-label="Fiche client">
+    <button class="tab" role="tab" data-tabs-target="tab">Infos</button>
+    <button class="tab" role="tab" data-tabs-target="tab">
+      Factures <span class="badge">3</span>
+    </button>
+    <button class="tab" role="tab" data-tabs-target="tab">Historique</button>
+  </div>
+  <div class="tab-panel" role="tabpanel" data-tabs-target="panel">
+    <p>Boulangerie Martin, 12 rue Nationale, Lille.</p>
+  </div>
+  <div class="tab-panel" role="tabpanel" data-tabs-target="panel" hidden>
+    <p>3 factures, dont 1 en retard.</p>
+  </div>
+  <div class="tab-panel" role="tabpanel" data-tabs-target="panel" hidden>
+    <p>Devis envoyé le 14/11, signé le 20/11.</p>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <h3>Onglet ouvert</h3>
+        <p class="text-muted">
+          Mettez <code>hidden</code> sur les panneaux qui ne sont pas ouverts au départ : sinon,
+          tous s'affichent le temps que le JS se charge. Pour ouvrir un autre onglet que le premier,
+          ajoutez <code>aria-selected="true"</code> sur cet onglet.
+        </p>
+        <p class="text-muted">
+          Si un panneau a un id, l'onglet peut aussi s'ouvrir depuis l'URL : avec
+          <code>id="factures"</code>, l'adresse <code>/clients/4#factures</code> ouvre l'onglet
+          Factures. Changer d'onglet met l'ancre à jour, donc un rechargement ou une redirection
+          vers cette adresse retombe sur le même onglet.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;div class="tab-panel" role="tabpanel" data-tabs-target="panel" id="factures" hidden&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Chargement à l'ouverture</h3>
+        <p class="text-muted">
+          Une <code>&lt;turbo-frame loading="lazy"&gt;</code> dans un panneau ne se charge qu'à
+          l'ouverture de l'onglet, sans code en plus. Pour autre chose, le controller envoie
+          l'événement <code>tabs:change</code> avec l'onglet, le panneau et son index.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;div class="tab-panel" role="tabpanel" data-tabs-target="panel" hidden&gt;
+  &lt;turbo-frame id="factures" src="/clients/4/factures" loading="lazy"&gt;
+    &lt;progress class="progress" aria-label="Chargement"&gt;&lt;/progress&gt;
+  &lt;/turbo-frame&gt;
+&lt;/div&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Onglets qui changent de page</h3>
+        <p class="text-muted">
+          Quand chaque onglet est une page à part, utilisez des liens <code>&lt;a class="tab"&gt;</code>
+          avec le controller <code>nav</code> à la place de <code>tabs</code>. Le lien de la page
+          courante prend <code>aria-current="page"</code> et le même style qu'un onglet ouvert.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;nav class="tabs" data-controller="nav" aria-label="Fiche client"&gt;
+  &lt;a class="tab" href="/clients/4"&gt;Infos&lt;/a&gt;
+  &lt;a class="tab" href="/clients/4/factures" data-nav-match="prefix"&gt;Factures&lt;/a&gt;
+&lt;/nav&gt;</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= ÉTAT VIDE -->
+      <section class="doc-section" id="vide">
+        <h2>État vide</h2>
+        <p class="text-muted">
+          À afficher à la place d'une liste ou d'une table qui n'a encore rien. Il dit ce qui
+          apparaîtra ici et propose l'action pour commencer. Toutes les parties sont optionnelles.
+          Pas de JS.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="empty">
+  <span class="icon-box"><span class="icon icon-invoice" aria-hidden="true"></span></span>
+  <h3>Aucune facture pour l'instant</h3>
+  <p>Les factures envoyées à vos clients apparaîtront ici, avec leur statut de paiement.</p>
+  <a class="btn btn-primary" href="#vide">
+    <span class="icon icon-plus" aria-hidden="true"></span> Nouvelle facture
+  </a>
+</div>
+          </div>
+        </div>
+
+        <h3>Version compacte</h3>
+        <p class="text-muted">
+          <code>.empty-compact</code> réduit les marges et retire la bordure, pour une card ou une
+          table. Dans une table, l'état vide se place dans une cellule qui prend toute la largeur.
+          C'est aussi le bon endroit pour un filtre ou une recherche sans résultat.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Prospect</th><th>Statut</th><th class="num">Budget</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="3">
+          <div class="empty empty-compact">
+            <span class="icon-box"><span class="icon icon-search" aria-hidden="true"></span></span>
+            <h3>Aucun prospect ne correspond</h3>
+            <p>Essayez un autre statut ou retirez un filtre.</p>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= PAGINATION -->
+      <section class="doc-section" id="pagination">
+        <h2>Pagination</h2>
+        <p class="text-muted">
+          Des liens dans un <code>&lt;nav&gt;</code>, sans JS. La page courante prend
+          <code>aria-current="page"</code>. Quand il n'y a pas de page précédente ou suivante, la
+          flèche devient un <code>&lt;span aria-disabled="true"&gt;</code> grisé. Les flèches
+          gardent un texte pour les lecteurs d'écran (<code>.sr-only</code>).
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<nav class="pagination" aria-label="Pagination">
+  <a class="page-link" href="#pagination" rel="prev">
+    <span class="icon icon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Page précédente</span>
+  </a>
+  <a class="page-link" href="#pagination">1</a>
+  <a class="page-link" href="#pagination" aria-current="page">2</a>
+  <a class="page-link" href="#pagination">3</a>
+  <span class="page-gap">…</span>
+  <a class="page-link" href="#pagination">7</a>
+  <a class="page-link" href="#pagination" rel="next">
+    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Page suivante</span>
+  </a>
+</nav>
+          </div>
+        </div>
+
+        <h3>Avec un résumé</h3>
+        <p class="text-muted">
+          <code>.pagination-bar</code> met le nombre de résultats à gauche et la pagination à
+          droite. Sur mobile, les deux passent l'un sous l'autre. Ici, on est sur la première
+          page, donc la flèche « précédente » est désactivée.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="pagination-bar">
+  <p>1–20 sur 132 prospects</p>
+  <nav class="pagination" aria-label="Pagination">
+    <span class="page-link" aria-disabled="true">
+      <span class="icon icon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Page précédente</span>
+    </span>
+    <a class="page-link" href="#pagination" aria-current="page">1</a>
+    <a class="page-link" href="#pagination">2</a>
+    <a class="page-link" href="#pagination">3</a>
+    <span class="page-gap">…</span>
+    <a class="page-link" href="#pagination">7</a>
+    <a class="page-link" href="#pagination" rel="next">
+      <span class="icon icon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Page suivante</span>
+    </a>
+  </nav>
+</div>
+          </div>
+        </div>
+      </section>
+
       <!-- ================================================= UTILITAIRES -->
       <section class="doc-section" id="utilitaires">
         <h2>Utilitaires</h2>
@@ -1239,6 +1688,38 @@
       });
     });
 
+  </script>
+  <!-- Conteneur des toasts (démo de la section Toast) -->
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <template id="doc-toast-template">
+    <div class="toast" data-controller="toast">
+      <span class="icon" aria-hidden="true"></span>
+      <p class="toast-body"></p>
+      <button type="button" class="btn btn-ghost btn-icon btn-sm" data-action="toast#close">
+        <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+        <span class="sr-only">Fermer</span>
+      </button>
+    </div>
+  </template>
+  <script>
+    // Boutons « Essayer » de la section Toast : ajoutent un vrai toast dans #toasts.
+    const docToasts = {
+      "": ["icon-info", "Une nouvelle version du kit est disponible."],
+      "toast-success": ["icon-check-circle", "Prospect enregistré."],
+      "toast-warning": ["icon-alert", "La facture de Boulangerie Martin est en retard."],
+      "toast-danger": ["icon-x-circle", "L'envoi du devis a échoué."],
+    };
+    document.querySelectorAll("[data-doc-toast]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const variant = btn.dataset.docToast;
+        const [icon, text] = docToasts[variant];
+        const toast = document.getElementById("doc-toast-template").content.firstElementChild.cloneNode(true);
+        if (variant) toast.classList.add(variant);
+        toast.querySelector(".icon").classList.add(icon);
+        toast.querySelector(".toast-body").textContent = text;
+        document.getElementById("toasts").append(toast);
+      });
+    });
   </script>
 </body>
 </html>
