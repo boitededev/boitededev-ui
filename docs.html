@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boite de Dev UI : documentation</title>
+
+  <!-- Polices de la charte -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Le framework (chemin relatif) -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Stimulus + les controllers du kit (comme dans un vrai projet).
+       Les modules JS ne marchent pas en ouvrant le fichier directement (file://) :
+       lancer un petit serveur, voir le README. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js"
+    }
+  }
+  </script>
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import { registerControllers } from "./js/index.js"
+
+    registerControllers(Application.start())
+  </script>
+
+  <!-- Styles propres à la page de doc uniquement (préfixe .doc-) -->
+  <style>
+    .doc-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: var(--sp-7);
+      padding-block: var(--sp-6) var(--sp-8);
+    }
+    .doc-toc {
+      position: sticky;
+      top: calc(var(--nav-h) + 24px);
+      align-self: start;
+      display: grid;
+      gap: 2px;
+      font-size: var(--fs-sm);
+    }
+    .doc-toc strong {
+      margin: var(--sp-4) 0 var(--sp-1);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .doc-toc strong:first-child { margin-top: 0; }
+    .doc-toc a {
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--ink-2);
+      text-decoration: none;
+    }
+    .doc-toc a:hover { background: var(--sky-soft); color: var(--sky-deep); }
+
+    .doc-section {
+      padding-bottom: var(--sp-7);
+      margin-bottom: var(--sp-7);
+      border-bottom: 1px solid var(--line);
+    }
+    .doc-section:last-child { border-bottom: 0; }
+    .doc-section > h2 { margin-bottom: var(--sp-2); }
+    .doc-section > p { color: var(--muted); max-width: 70ch; }
+    .doc-section h3 { margin: var(--sp-6) 0 var(--sp-3); font-size: var(--fs-lg); }
+
+    /* Bloc exemple : aperçu + code */
+    .doc-example {
+      margin-top: var(--sp-4);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--white);
+    }
+    .doc-demo {
+      padding: var(--sp-5);
+      background: var(--paper);
+    }
+    .doc-code {
+      position: relative;
+      border-top: 1px solid var(--line);
+      background: #0f1115;
+    }
+    .doc-code pre {
+      margin: 0;
+      padding: var(--sp-4) var(--sp-5);
+      overflow-x: auto;
+      color: #c9d3df;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .doc-code .t { color: #7ad0ff; }   /* balise */
+    .doc-code .a { color: #ffd58a; }   /* attribut */
+    .doc-code .c { color: #8c95a5; }   /* commentaire */
+    .doc-copy {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-pill);
+      background: transparent;
+      color: #c9d3df;
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .doc-copy:hover { border-color: #c9d3df; }
+    .doc-copy:focus-visible { outline-color: var(--sky); }
+
+    /* Nuancier */
+    .doc-swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: var(--sp-3);
+      margin-top: var(--sp-4);
+    }
+    .doc-swatch {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--white);
+      font-size: 13px;
+    }
+    .doc-swatch > span { display: block; height: 56px; }
+    .doc-swatch code {
+      display: block;
+      padding: 8px 10px;
+      background: none;
+      color: var(--ink-2);
+    }
+
+    /* Échelle d'espacements */
+    .doc-space { display: grid; gap: 8px; margin-top: var(--sp-4); }
+    .doc-space div {
+      display: grid;
+      grid-template-columns: 70px 50px 1fr;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .doc-space i {
+      display: block;
+      height: 12px;
+      border-radius: 3px;
+      background: var(--sky);
+    }
+
+    /* Boîtes de démo pour layout */
+    .doc-box {
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      background: var(--sky-soft);
+      color: var(--sky-deep);
+      font-family: var(--mono);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    /* Galerie d'icônes */
+    .doc-icons {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+      gap: var(--sp-2);
+      margin-top: var(--sp-4);
+    }
+    .doc-icon {
+      display: grid;
+      justify-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-4) var(--sp-2) var(--sp-3);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: border-color var(--t-fast), color var(--t-fast);
+    }
+    .doc-icon:hover { border-color: var(--sky); color: var(--sky-deep); }
+    .doc-icon .icon { --icon-size: 24px; }
+
+    @media (max-width: 860px) {
+      .doc-layout { grid-template-columns: 1fr; gap: var(--sp-5); }
+      .doc-toc { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip" href="#contenu">Aller au contenu</a>
+
+  <header class="navbar">
+    <div class="container">
+      <strong style="font-family: var(--display); font-size: 20px">
+        Boite de Dev <span class="text-sky">/ UI</span>
+      </strong>
+      <nav class="navbar-links" aria-label="Sections">
+        <a href="#tokens">Tokens</a>
+        <a href="#layout">Layout</a>
+        <a href="#boutons">Composants</a>
+        <a href="#utilitaires">Utilitaires</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container doc-layout">
+    <!-- Sommaire latéral -->
+    <aside class="doc-toc" aria-label="Sommaire">
+      <strong>Fondations</strong>
+      <a href="#intro">Introduction</a>
+      <a href="#tokens">Tokens</a>
+      <a href="#typo">Typographie</a>
+      <a href="#layout">Layout</a>
+      <strong>Composants</strong>
+      <a href="#boutons">Boutons</a>
+      <a href="#navbar">Navbar</a>
+      <a href="#card">Card</a>
+      <a href="#badges">Badge, chip, tag</a>
+      <a href="#forms">Formulaires</a>
+      <a href="#table">Table</a>
+      <a href="#alertes">Alertes</a>
+      <a href="#stat">Stat (KPI)</a>
+      <a href="#accordeon">Accordéon</a>
+      <a href="#icones">Icônes</a>
+      <a href="#modal">Modal</a>
+      <strong>Outils</strong>
+      <a href="#utilitaires">Utilitaires</a>
+      <a href="#a11y">Accessibilité</a>
+      <a href="#anim">Animations</a>
+    </aside>
+
+    <main id="contenu">
+
+      <!-- ================================================= INTRO -->
+      <section class="doc-section" id="intro">
+        <span class="eyebrow">Documentation</span>
+        <h1 class="mt-4">Boite de Dev <span class="hl">UI</span></h1>
+        <p class="lead mt-4">
+          Un fichier CSS sans dépendance (<code>css/style.css</code>) et quelques
+          controllers Stimulus (<code>js/</code>). Il contient les tokens de la charte,
+          les composants et quelques classes utilitaires. Aucun outil de build.
+        </p>
+
+        <h3>Installation : CSS seul</h3>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boitededev-ui@1.0.0/css/style.css"&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Installation : avec les controllers JS</h3>
+        <p class="text-muted">
+          Le projet fournit Stimulus, le kit ne l'embarque pas. Les controllers propres
+          au projet s'enregistrent à côté, comme d'habitude.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+            <pre>&lt;script type="importmap"&gt;
+{
+  "imports": {
+    "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js",
+    "boitededev-ui": "https://cdn.jsdelivr.net/npm/boitededev-ui@1.0.0/js/index.js"
+  }
+}
+&lt;/script&gt;
+&lt;script type="module"&gt;
+  import { Application } from "@hotwired/stimulus"
+  import { registerControllers } from "boitededev-ui"
+
+  const app = Application.start()
+  registerControllers(app)
+&lt;/script&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Thème</h3>
+        <p class="text-muted">
+          Toutes les valeurs passent par des variables CSS sur <code>:root</code>.
+          On peut aussi les surcharger localement sur un bloc :
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+            <div style="--sky: #16a34a; --beam-2: #86efac" class="row">
+              <button class="btn btn-primary">Bouton vert</button>
+              <span class="eyebrow">Eyebrow vert</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= TOKENS -->
+      <section class="doc-section" id="tokens">
+        <h2>Tokens</h2>
+        <p>Chaque token s'utilise avec <code>var(--nom)</code>.</p>
+
+        <h3>Neutres</h3>
+        <div class="doc-swatches" data-swatches="ink ink-2 muted line line-strong paper white overlay"></div>
+
+        <h3>Marque</h3>
+        <div class="doc-swatches" data-swatches="sky sky-deep sky-soft beam-1 beam-2"></div>
+
+        <h3>États</h3>
+        <div class="doc-swatches" data-swatches="success success-soft warning warning-soft danger danger-soft info info-soft"></div>
+
+        <h3>Espacements</h3>
+        <div class="doc-space" data-space="1 2 3 4 5 6 7 8"></div>
+
+        <h3>Rayons &amp; ombres</h3>
+        <div class="grid grid-4">
+          <div class="doc-box" style="border-radius: var(--radius-sm)">--radius-sm</div>
+          <div class="doc-box" style="border-radius: var(--radius)">--radius</div>
+          <div class="doc-box" style="border-radius: var(--radius-lg)">--radius-lg</div>
+          <div class="doc-box" style="border-radius: var(--radius-pill)">--radius-pill</div>
+          <div class="doc-box bg-white" style="box-shadow: var(--shadow-sm)">--shadow-sm</div>
+          <div class="doc-box bg-white" style="box-shadow: var(--shadow)">--shadow</div>
+          <div class="doc-box bg-white" style="box-shadow: var(--shadow-lg)">--shadow-lg</div>
+        </div>
+
+        <h3>Tailles de contrôles</h3>
+        <p>
+          <code>--control-sm</code> (32px), <code>--control</code> (42px), <code>--control-lg</code> (50px)
+          pour les boutons carrés <code>.btn-icon</code> ; <code>--icon-box</code> (40px) pour la pastille <code>.icon-box</code>.
+        </p>
+      </section>
+
+      <!-- ================================================= TYPO -->
+      <section class="doc-section" id="typo">
+        <h2>Typographie</h2>
+        <p>Titres en Bricolage Grotesque, texte en Figtree, code en JetBrains Mono.</p>
+
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack">
+  <h1>Titre h1</h1>
+  <h2>Titre h2</h2>
+  <h3>Titre h3</h3>
+  <h4>Titre h4</h4>
+  <p>Paragraphe avec du <code>code inline</code>.</p>
+</div>
+          </div>
+        </div>
+
+        <h3>Eyebrow, lead, surlignage</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="section-head">
+  <span class="eyebrow">Prospects</span>
+  <h2>Suivi des <span class="hl">clients</span></h2>
+  <p class="lead">Tous les contacts en cours, triés par date de relance.</p>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= LAYOUT -->
+      <section class="doc-section" id="layout">
+        <h2>Layout</h2>
+        <p>
+          <code>.section</code> ajoute un padding vertical.
+        </p>
+
+        <h3>Conteneurs</h3>
+        <p class="text-muted">
+          <code>.container</code> centre le contenu sur 1160px max,
+          <code>.container-xl</code> sur 1300px max (pratique pour les tableaux larges).
+          Les deux gardent une marge de 16px de chaque côté sur mobile.
+          Les largeurs se règlent avec <code>--container</code> et <code>--container-xl</code>.
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;main class="container"&gt;…&lt;/main&gt;
+&lt;main class="container-xl"&gt;…&lt;/main&gt;</pre>
+          </div>
+        </div>
+
+        <h3>Stack : pile verticale</h3>
+        <p class="text-muted">Écart réglable via <code>--stack-gap</code>.</p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack" style="--stack-gap: 8px">
+  <div class="doc-box">1</div>
+  <div class="doc-box">2</div>
+  <div class="doc-box">3</div>
+</div>
+          </div>
+        </div>
+
+        <h3>Row : rangée qui passe à la ligne</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row justify-between">
+  <h3>Prospects</h3>
+  <div class="row">
+    <button class="btn btn-ghost btn-sm">Exporter</button>
+    <button class="btn btn-sm">Ajouter</button>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <h3>Grilles fixes</h3>
+        <p class="text-muted">
+          <code>.grid-2</code>, <code>.grid-3</code>, <code>.grid-4</code> :
+          passent à 2 colonnes sous 1000px, à 1 sous 640px.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="grid grid-4">
+  <div class="doc-box">1</div>
+  <div class="doc-box">2</div>
+  <div class="doc-box">3</div>
+  <div class="doc-box">4</div>
+</div>
+          </div>
+        </div>
+
+        <h3>Grille auto</h3>
+        <p class="text-muted">La grille crée autant de colonnes que la place le permet. La largeur minimale se règle avec <code>--min</code>.</p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="grid grid-auto" style="--min: 160px">
+  <div class="doc-box">A</div>
+  <div class="doc-box">B</div>
+  <div class="doc-box">C</div>
+  <div class="doc-box">D</div>
+  <div class="doc-box">E</div>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= BOUTONS -->
+      <section class="doc-section" id="boutons">
+        <h2>Boutons</h2>
+        <p>Fonctionne sur <code>&lt;button&gt;</code> et <code>&lt;a&gt;</code>.</p>
+
+        <h3>Variantes</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row">
+  <button class="btn">Défaut</button>
+  <button class="btn btn-ink">Ink</button>
+  <button class="btn btn-primary">Primary</button>
+  <button class="btn btn-ghost">Ghost</button>
+  <button class="btn btn-danger">Danger</button>
+  <button class="btn" disabled>Désactivé</button>
+</div>
+          </div>
+        </div>
+
+        <h3>Tailles &amp; flèche</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row">
+  <button class="btn btn-sm">Petit</button>
+  <button class="btn">Normal</button>
+  <button class="btn btn-lg">Grand</button>
+  <a class="btn btn-ink" href="#boutons">Voir <span class="arrow">→</span></a>
+</div>
+          </div>
+        </div>
+
+        <h3>Pleine largeur</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<button class="btn btn-primary btn-block">Enregistrer</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= NAVBAR -->
+      <section class="doc-section" id="navbar">
+        <h2>Navbar</h2>
+        <p>
+          La navbar reste collée en haut de la page, sur un fond flouté. Le lien actif
+          se marque avec <code>aria-current="page"</code>. Sur mobile, les liens
+          défilent horizontalement.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo" style="padding: 0">
+<header class="navbar" style="position: static">
+  <div class="container">
+    <strong>Dashboard</strong>
+    <nav class="navbar-links">
+      <a href="#navbar" aria-current="page">Accueil</a>
+      <a href="#navbar">Prospects</a>
+      <a href="#navbar">Factures</a>
+    </nav>
+    <a class="btn btn-sm" href="#navbar">Nouveau</a>
+  </div>
+</header>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= CARD -->
+      <section class="doc-section" id="card">
+        <h2>Card</h2>
+        <p>
+          Bloc blanc avec bordure et ombre. Les sous-parties <code>.card-header</code>
+          et <code>.card-footer</code> sont optionnelles.
+        </p>
+
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="grid grid-3">
+  <div class="card">
+    <h2>Stats</h2>
+    <p>Carte simple, comme le composant Card().</p>
+    <div class="card-footer">
+      <button class="btn btn-sm">Voir</button>
+    </div>
+  </div>
+
+  <div class="card card-flat">
+    <div class="card-header">
+      <h3>Boulangerie Martin</h3>
+      <span class="badge badge-success badge-dot">Signé</span>
+    </div>
+    <p>Site vitrine + maintenance.</p>
+  </div>
+
+  <div class="card card-dark">
+    <h3>Card sombre</h3>
+    <p>Pour mettre un bloc en avant.</p>
+    <div class="card-footer">
+      <button class="btn btn-primary btn-sm">Action</button>
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= BADGES -->
+      <section class="doc-section" id="badges">
+        <h2>Badge, chip, tag</h2>
+
+        <h3>Badge : statut</h3>
+        <p class="text-muted">Ajouter <code>.badge-dot</code> pour une pastille.</p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row">
+  <span class="badge">Neutre</span>
+  <span class="badge badge-info badge-dot">Contacté</span>
+  <span class="badge badge-warning badge-dot">À relancer</span>
+  <span class="badge badge-success badge-dot">Signé</span>
+  <span class="badge badge-danger badge-dot">Perdu</span>
+</div>
+          </div>
+        </div>
+
+        <h3>Chips : liste de mots-clés</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<ul class="chips">
+  <li>Go</li>
+  <li>templ</li>
+  <li>HTMX</li>
+  <li>PostgreSQL</li>
+</ul>
+          </div>
+        </div>
+
+        <h3>Tag : étiquette mono</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row">
+  <span class="tag">v1.2.0</span>
+  <span class="tag">GET /prospects</span>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= FORMS -->
+      <section class="doc-section" id="forms">
+        <h2>Formulaires</h2>
+        <p>
+          Un <code>.field</code> regroupe label, champ et aide. Erreur :
+          <code>aria-invalid="true"</code> + <code>.hint-error</code>.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<form class="grid grid-2" onsubmit="return false">
+  <div class="field">
+    <label for="nom">Nom</label>
+    <input id="nom" class="input" placeholder="Boulangerie Martin">
+  </div>
+
+  <div class="field">
+    <label for="statut">Statut</label>
+    <select id="statut" class="select">
+      <option>Contacté</option>
+      <option>À relancer</option>
+      <option>Signé</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="mail">Email</label>
+    <input id="mail" class="input" type="email" value="pas-un-email" aria-invalid="true" aria-describedby="mail-err">
+    <small id="mail-err" class="hint hint-error">Adresse email invalide.</small>
+  </div>
+
+  <div class="field">
+    <label for="budget">Budget</label>
+    <input id="budget" class="input" type="number" placeholder="1500">
+    <small class="hint">En euros HT.</small>
+  </div>
+
+  <div class="field" style="grid-column: 1 / -1">
+    <label for="notes">Notes</label>
+    <textarea id="notes" class="textarea"></textarea>
+  </div>
+
+  <div class="row justify-end" style="grid-column: 1 / -1">
+    <button class="btn btn-ghost" type="reset">Annuler</button>
+    <button class="btn btn-primary" type="submit">Enregistrer</button>
+  </div>
+</form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= TABLE -->
+      <section class="doc-section" id="table">
+        <h2>Table</h2>
+        <p>
+          Placez toujours la table dans un <code>.table-wrap</code> : sur mobile, c'est lui
+          qui gère le scroll horizontal. <code>.num</code> aligne les nombres à droite.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Prospect</th>
+        <th>Statut</th>
+        <th>Relance</th>
+        <th class="num">Budget</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Boulangerie Martin</td>
+        <td><span class="badge badge-success badge-dot">Signé</span></td>
+        <td>—</td>
+        <td class="num">1 500 €</td>
+      </tr>
+      <tr>
+        <td>Garage Dupont</td>
+        <td><span class="badge badge-warning badge-dot">À relancer</span></td>
+        <td>28/11</td>
+        <td class="num">2 400 €</td>
+      </tr>
+      <tr>
+        <td>Studio Yoga Lille</td>
+        <td><span class="badge badge-info badge-dot">Contacté</span></td>
+        <td>02/12</td>
+        <td class="num">900 €</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= ALERTES -->
+      <section class="doc-section" id="alertes">
+        <h2>Alertes</h2>
+        <p>
+          Utiliser <code>role="status"</code> pour une info, <code>role="alert"</code>
+          pour une erreur à annoncer immédiatement.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="stack">
+  <div class="alert" role="status">3 prospects à relancer cette semaine.</div>
+  <div class="alert alert-success" role="status">Prospect enregistré.</div>
+  <div class="alert alert-warning" role="status">Facture en retard de 12 jours.</div>
+  <div class="alert alert-danger" role="alert">Impossible de contacter le serveur.</div>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= STAT -->
+      <section class="doc-section" id="stat">
+        <h2>Stat (KPI)</h2>
+        <p>Un libellé et une valeur. Sur un tableau de bord, placez chaque stat dans une card.</p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="grid grid-3">
+  <div class="card">
+    <div class="stat">
+      <span class="stat-label">CA du mois</span>
+      <strong class="stat-value">4 200 €</strong>
+    </div>
+  </div>
+  <div class="card">
+    <div class="stat">
+      <span class="stat-label">Prospects actifs</span>
+      <strong class="stat-value">18</strong>
+    </div>
+  </div>
+  <div class="card">
+    <div class="stat">
+      <span class="stat-label">Taux de signature</span>
+      <strong class="stat-value text-success">32 %</strong>
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= ACCORDEON -->
+      <section class="doc-section" id="accordeon">
+        <h2>Accordéon</h2>
+        <p>Il repose sur l'élément natif <code>&lt;details&gt;</code>, qui gère le clavier et les lecteurs d'écran sans JavaScript.</p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="accordion">
+  <details open>
+    <summary>Comment ajouter un prospect ?</summary>
+    <p>Bouton « Ajouter » en haut de la liste.</p>
+  </details>
+  <details>
+    <summary>Peut-on exporter en CSV ?</summary>
+    <p>Oui, via le bouton « Exporter ».</p>
+  </details>
+</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= ICÔNES -->
+      <section class="doc-section" id="icones">
+        <h2>Icônes</h2>
+        <p>
+          Un jeu d'icônes au trait, sans dépendance : chaque icône est un SVG intégré
+          au CSS et appliqué en masque. Elle prend donc la couleur du texte
+          (<code>currentColor</code>) et sa taille suit la police.
+          Ajoutez <code>aria-hidden="true"</code> : l'icône est décorative, le texte porte le sens.
+        </p>
+
+        <h3>Le jeu complet</h3>
+        <p class="text-muted">Cliquez sur une icône pour copier son code.</p>
+        <div class="doc-icons" data-icons="home dashboard menu more chevron-left chevron-right chevron-up chevron-down arrow-left arrow-right external logout plus minus check x edit trash copy search filter sort refresh download upload send link eye settings user users building briefcase mail phone map-pin globe calendar clock file invoice folder euro chart trending-up tag star bell lock info check-circle alert x-circle"></div>
+
+        <h3>Tailles &amp; couleurs</h3>
+        <p class="text-muted">
+          <code>1.25em</code> par défaut, puis <code>.icon-sm</code> (1em),
+          <code>.icon-lg</code> (1.5em), <code>.icon-xl</code> (2em). Pour une taille
+          précise : <code>style="--icon-size: 20px"</code>.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row items-center">
+  <span class="icon icon-star icon-sm" aria-hidden="true"></span>
+  <span class="icon icon-star" aria-hidden="true"></span>
+  <span class="icon icon-star icon-lg" aria-hidden="true"></span>
+  <span class="icon icon-star icon-xl" aria-hidden="true"></span>
+  <span class="icon icon-star icon-xl text-sky" aria-hidden="true"></span>
+  <span class="icon icon-star icon-xl text-success" aria-hidden="true"></span>
+  <span class="icon icon-star icon-xl text-danger" aria-hidden="true"></span>
+</div>
+          </div>
+        </div>
+
+        <h3>Dans un bouton ou un texte</h3>
+        <p class="text-muted">
+          Le <code>.btn</code> gère déjà l'espacement. Un bouton qui ne contient qu'une
+          icône prend <code>.btn-icon</code> et un texte <code>.sr-only</code>.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row items-center">
+  <button class="btn btn-ink">
+    <span class="icon icon-plus" aria-hidden="true"></span> Nouveau prospect
+  </button>
+  <button class="btn btn-ghost">
+    <span class="icon icon-download" aria-hidden="true"></span> Exporter
+  </button>
+  <button class="btn btn-ghost btn-icon">
+    <span class="icon icon-edit" aria-hidden="true"></span>
+    <span class="sr-only">Modifier</span>
+  </button>
+  <button class="btn btn-danger btn-icon btn-sm">
+    <span class="icon icon-trash icon-sm" aria-hidden="true"></span>
+    <span class="sr-only">Supprimer</span>
+  </button>
+</div>
+<p class="mt-4 text-muted">
+  <span class="icon icon-mail icon-sm" aria-hidden="true"></span> contact@boulangerie-martin.fr
+  · <span class="icon icon-phone icon-sm" aria-hidden="true"></span> 03 20 00 00 00
+</p>
+          </div>
+        </div>
+
+        <h3>Pastille : .icon-box</h3>
+        <p class="text-muted">
+          Carré de 40px sur fond bleu clair. Les fonds <code>.bg-success-soft</code>,
+          <code>.bg-warning-soft</code>, <code>.bg-danger-soft</code> et <code>.bg-ink</code>
+          adaptent la couleur de l'icône.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="grid grid-3">
+  <div class="card row items-center">
+    <span class="icon-box"><span class="icon icon-euro" aria-hidden="true"></span></span>
+    <div class="stat">
+      <span class="stat-label">CA du mois</span>
+      <strong class="stat-value">4 200 €</strong>
+    </div>
+  </div>
+  <div class="card row items-center">
+    <span class="icon-box bg-success-soft"><span class="icon icon-trending-up" aria-hidden="true"></span></span>
+    <div class="stat">
+      <span class="stat-label">Taux de signature</span>
+      <strong class="stat-value">32 %</strong>
+    </div>
+  </div>
+  <div class="card row items-center">
+    <span class="icon-box bg-danger-soft"><span class="icon icon-alert" aria-hidden="true"></span></span>
+    <div class="stat">
+      <span class="stat-label">Factures en retard</span>
+      <strong class="stat-value">3</strong>
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <h3>Ajouter une icône</h3>
+        <p class="text-muted">
+          Dessinez-la sur une grille 24×24 au trait (épaisseur 2, bouts arrondis),
+          encodez le SVG en URL et déclarez la variable <code>--icon</code> :
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>.icon-ma-forme { --icon: url("data:image/svg+xml,%3Csvg …%3E"); }</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= MODAL -->
+      <section class="doc-section" id="modal">
+        <h2>Modal</h2>
+        <p class="text-muted">
+          Basée sur la balise native <code>&lt;dialog&gt;</code> : le navigateur gère le fond sombre,
+          la touche Échap et le retour du focus. Le controller Stimulus <code>modal</code>
+          (<code>js/controllers/modal_controller.js</code>) ouvre, ferme et ferme au clic sur le fond.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div data-controller="modal">
+  <button type="button" class="btn btn-ink" data-action="modal#open">
+    <span class="icon icon-plus" aria-hidden="true"></span> Nouveau prospect
+  </button>
+  <dialog class="modal" data-modal-target="dialog" data-action="click->modal#backdrop" aria-labelledby="modal-demo-title">
+    <div class="modal-header">
+      <h2 id="modal-demo-title">Nouveau prospect</h2>
+      <button type="button" class="btn btn-ghost btn-icon btn-sm" data-action="modal#close">
+        <span class="icon icon-x icon-sm" aria-hidden="true"></span>
+        <span class="sr-only">Fermer</span>
+      </button>
+    </div>
+    <div class="modal-body stack">
+      <div class="field">
+        <label for="modal-demo-name">Entreprise</label>
+        <input id="modal-demo-name" class="input">
+      </div>
+      <div class="field">
+        <label for="modal-demo-mail">E-mail</label>
+        <input id="modal-demo-mail" class="input" type="email">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" data-action="modal#close">Annuler</button>
+      <button type="button" class="btn btn-ink" data-action="modal#close">Enregistrer</button>
+    </div>
+  </dialog>
+</div>
+          </div>
+        </div>
+
+        <h3>Tailles</h3>
+        <p class="text-muted">
+          <code>.modal-sm</code> (<code>--modal-w-sm</code>, 400px), par défaut (<code>--modal-w</code>, 560px),
+          <code>.modal-lg</code> (<code>--modal-w-lg</code>, 800px). Sur mobile, la modal prend toute la largeur
+          moins la gouttière. Le fond utilise le token <code>--overlay</code>.
+        </p>
+      </section>
+
+      <!-- ================================================= UTILITAIRES -->
+      <section class="doc-section" id="utilitaires">
+        <h2>Utilitaires</h2>
+        <p>Chaque classe fait une seule chose. Elles servent aux petits ajustements.</p>
+
+        <div class="table-wrap mt-4">
+          <table class="table">
+            <thead>
+              <tr><th>Famille</th><th>Classes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Marges</td><td><code>.m-*</code> <code>.mx-*</code> <code>.my-*</code> <code>.mt-*</code> <code>.mb-*</code> <code>.ml-*</code> <code>.mr-*</code></td></tr>
+              <tr><td>Marges auto</td><td><code>.mx-auto</code> <code>.ml-auto</code> <code>.mr-auto</code></td></tr>
+              <tr><td>Paddings</td><td><code>.p-*</code> <code>.px-*</code> <code>.py-*</code> <code>.pt-*</code> <code>.pb-*</code> <code>.pl-*</code> <code>.pr-*</code></td></tr>
+              <tr><td>Gaps</td><td><code>.gap-1/2/4/6</code></td></tr>
+              <tr><td>Flex</td><td><code>.items-start/center/end</code> <code>.justify-between/center/end</code> <code>.flex-1</code></td></tr>
+              <tr><td>Texte</td><td><code>.text-left/center/right</code> <code>.text-xs/sm/lg</code> <code>.text-mono</code> <code>.text-bold</code></td></tr>
+              <tr><td>Couleurs</td><td><code>.text-muted/ink/sky/success/danger</code></td></tr>
+              <tr><td>Fonds</td><td><code>.bg-white/paper/ink/sky-soft</code></td></tr>
+              <tr><td>Bordures</td><td><code>.border</code> <code>.rounded</code> <code>.rounded-lg</code> <code>.shadow</code></td></tr>
+              <tr><td>Débordement</td><td><code>.nowrap</code> <code>.truncate</code></td></tr>
+              <tr><td>Affichage</td><td><code>.hidden</code> <code>.w-full</code> <code>.hide-mobile</code> <code>.show-mobile</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Marges et paddings</h3>
+        <p class="text-muted">
+          <code>m</code> = margin, <code>p</code> = padding. Le suffixe indique le côté :
+          rien pour les 4 côtés, <code>x</code> pour gauche et droite, <code>y</code> pour haut
+          et bas, puis <code>t</code>, <code>b</code>, <code>l</code>, <code>r</code> pour un
+          seul côté. Le chiffre renvoie à l'échelle d'espacements.
+        </p>
+        <div class="table-wrap mt-4">
+          <table class="table">
+            <thead>
+              <tr><th>Chiffre</th><th>Token</th><th class="num">Valeur</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>0</code></td><td>aucun</td><td class="num">0</td></tr>
+              <tr><td><code>2</code></td><td><code>--sp-2</code></td><td class="num">8px</td></tr>
+              <tr><td><code>4</code></td><td><code>--sp-4</code></td><td class="num">16px</td></tr>
+              <tr><td><code>5</code></td><td><code>--sp-5</code></td><td class="num">24px</td></tr>
+              <tr><td><code>6</code></td><td><code>--sp-6</code></td><td class="num">32px</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-muted mt-4">
+          Les classes vont du plus large au plus précis : dans <code>px-5 pl-0</code>,
+          le <code>pl-0</code> l'emporte sur la gauche.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="bg-white border rounded py-4 px-5">.py-4 .px-5</div>
+<div class="bg-white border rounded p-2 mt-4">.p-2 .mt-4</div>
+<div class="bg-white border rounded px-5 pl-0 mt-4">.px-5 .pl-0</div>
+<div class="bg-sky-soft rounded p-4 mt-4" style="width: 50%">
+  <div class="bg-white rounded p-2 mx-auto" style="width: 60%">.mx-auto (centré)</div>
+</div>
+          </div>
+        </div>
+
+        <h3>Exemple</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="row bg-white border rounded-lg" style="padding: 16px">
+  <div class="flex-1">
+    <p class="text-bold truncate">Garage Dupont — refonte site + prise de rendez-vous en ligne</p>
+    <p class="text-sm text-muted">Dernier échange il y a 6 jours</p>
+  </div>
+  <span class="text-mono text-sm text-sky hide-mobile">#P-0042</span>
+  <button class="btn btn-ghost btn-sm">Ouvrir</button>
+</div>
+<hr class="divider">
+<p class="text-center text-xs text-muted">Séparateur .divider au-dessus</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= A11Y -->
+      <section class="doc-section" id="a11y">
+        <h2>Accessibilité</h2>
+        <ul class="stack mt-4" style="--stack-gap: 10px; padding-left: 20px">
+          <li><code>:focus-visible</code> affiche un anneau bleu, seulement à la navigation au clavier (testez avec Tab).</li>
+          <li><code>.sr-only</code> cache un texte à l'écran tout en le laissant aux lecteurs d'écran.</li>
+          <li><code>.skip</code> est le lien « Aller au contenu ». Il n'apparaît qu'au focus : appuyez sur Tab en haut de cette page.</li>
+          <li>Les ancres <code>[id]</code> ne passent pas sous la navbar sticky.</li>
+        </ul>
+        <div class="doc-example">
+          <div class="doc-demo">
+<button class="btn btn-ghost btn-sm">
+  ✕ <span class="sr-only">Supprimer le prospect</span>
+</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= ANIMATIONS -->
+      <section class="doc-section" id="anim">
+        <h2>Animations</h2>
+        <p>
+          Elles se désactivent quand l'utilisateur a activé
+          <code>prefers-reduced-motion</code> dans son système.
+        </p>
+
+        <h3>.fade-up</h3>
+        <div class="doc-example">
+          <div class="doc-demo">
+<div class="card fade-up">Apparaît en glissant vers le haut.</div>
+          </div>
+        </div>
+
+        <h3>.reveal : apparition au scroll</h3>
+        <p class="text-muted">
+          Nécessite la classe <code>js</code> sur <code>&lt;html&gt;</code> et ce petit script :
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;script&gt;
+  document.documentElement.classList.add("js");
+  const io = new IntersectionObserver((entries) =&gt; {
+    entries.forEach((e) =&gt; {
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach((el) =&gt; io.observe(el));
+&lt;/script&gt;</pre>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    /* ------------------------------------------------------------------
+       1. Génère le bloc de code sous chaque .doc-demo à partir de son HTML
+          (le code affiché est donc toujours identique à l'aperçu).
+       ------------------------------------------------------------------ */
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function dedent(src) {
+      const lines = src.replace(/^\n+|\s+$/g, "").split("\n");
+      const indents = lines.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length);
+      const min = Math.min(...indents);
+      return lines.map((l) => l.slice(min)).join("\n");
+    }
+
+    function highlight(code) {
+      // code est déjà échappé. Une seule passe avec une regex à alternatives :
+      // chaque morceau n'est traité qu'une fois, donc les <span> insérés
+      // ne sont jamais re-colorés (bug des replace() enchaînés).
+      const re = /(&lt;!--[\s\S]*?--&gt;)|(&lt;\/?)([a-z][a-z0-9-]*)|(\s)([a-z][a-z-]*)(?==)/gi;
+      return code.replace(re, (m, comment, open, tag, space, attr) => {
+        if (comment) return `<span class="c">${comment}</span>`;
+        if (tag) return `${open}<span class="t">${tag}</span>`;
+        return `${space}<span class="a">${attr}</span>`;
+      });
+    }
+
+    function addCopyButton(container, getText) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "doc-copy";
+      btn.textContent = "Copier";
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(getText());
+          btn.textContent = "Copié ✓";
+        } catch {
+          btn.textContent = "Échec";
+        }
+        setTimeout(() => (btn.textContent = "Copier"), 1500);
+      });
+      container.appendChild(btn);
+    }
+
+    document.querySelectorAll(".doc-demo").forEach((demo) => {
+      const raw = dedent(demo.innerHTML);
+      const wrap = document.createElement("div");
+      wrap.className = "doc-code";
+      const pre = document.createElement("pre");
+      pre.innerHTML = highlight(escapeHtml(raw));
+      wrap.appendChild(pre);
+      addCopyButton(wrap, () => raw);
+      demo.after(wrap);
+    });
+
+    // Blocs de code écrits à la main (installation, script reveal)
+    document.querySelectorAll(".doc-code[data-raw]").forEach((wrap) => {
+      const pre = wrap.querySelector("pre");
+      const text = pre.textContent;
+      pre.innerHTML = highlight(escapeHtml(text));
+      addCopyButton(wrap, () => text);
+    });
+
+    /* ------------------------------------------------------------------
+       2. Nuanciers et échelle d'espacements lus depuis les variables CSS
+          (toujours à jour avec style.css).
+       ------------------------------------------------------------------ */
+    const rootStyle = getComputedStyle(document.documentElement);
+
+    document.querySelectorAll("[data-swatches]").forEach((el) => {
+      el.dataset.swatches.split(" ").forEach((name) => {
+        const value = rootStyle.getPropertyValue("--" + name).trim();
+        el.insertAdjacentHTML(
+          "beforeend",
+          `<div class="doc-swatch">
+             <span style="background: var(--${name})"></span>
+             <code>--${name}<br><span class="text-muted">${value}</span></code>
+           </div>`
+        );
+      });
+    });
+
+    document.querySelectorAll("[data-space]").forEach((el) => {
+      el.dataset.space.split(" ").forEach((n) => {
+        const value = rootStyle.getPropertyValue("--sp-" + n).trim();
+        el.insertAdjacentHTML(
+          "beforeend",
+          `<div><code>--sp-${n}</code><span class="text-muted">${value}</span><i style="width: var(--sp-${n})"></i></div>`
+        );
+      });
+    });
+    /* ------------------------------------------------------------------
+       3. Galerie d'icônes : un clic copie le code de l'icône.
+       ------------------------------------------------------------------ */
+    document.querySelectorAll("[data-icons]").forEach((el) => {
+      el.dataset.icons.split(" ").forEach((name) => {
+        const code = `<span class="icon icon-${name}" aria-hidden="true"></span>`;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "doc-icon";
+        btn.title = "Copier le code";
+        btn.innerHTML = `${code}<span>${name}</span>`;
+        btn.addEventListener("click", async () => {
+          const label = btn.lastElementChild;
+          try {
+            await navigator.clipboard.writeText(code);
+            label.textContent = "copié ✓";
+          } catch {
+            label.textContent = "échec";
+          }
+          setTimeout(() => (label.textContent = name), 1200);
+        });
+        el.appendChild(btn);
+      });
+    });
+
+  </script>
+</body>
+</html>
