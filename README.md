@@ -190,6 +190,10 @@ Puis ouvrir http://localhost:8000/docs.html
   - un lien dans le sommaire `.doc-toc` ;
   - une ligne dans le sommaire en tête de `css/style.css` si c'est une nouvelle section.
 - Les classes propres à la doc sont préfixées `.doc-` et restent dans le `<style>` de `docs.html`.
+- Si une démo a besoin de JS en plus (simuler une adresse, afficher un événement…), on écrit
+  un controller Stimulus préfixé `doc-` dans le `<script type="module">` de `docs.html`. Il ne va
+  jamais dans `js/`. On le pose autour de la `.doc-demo`, pas dedans, pour qu'il n'apparaisse pas
+  dans le code affiché.
 - Les commentaires du CSS sont en anglais, les textes de la doc en français.
 - Une icône s'écrit `<span class="icon icon-nom" aria-hidden="true"></span>`. C'est un SVG au trait 24×24
   (stroke 2, bouts arrondis) appliqué en `mask`, dont la couleur vient de `currentColor`. Chaque nouvelle

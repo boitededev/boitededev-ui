@@ -27,10 +27,60 @@
   }
   </script>
   <script type="module">
-    import { Application } from "@hotwired/stimulus"
+    import { Application, Controller } from "@hotwired/stimulus"
     import { registerControllers } from "./js/index.js"
 
-    registerControllers(Application.start())
+    const app = Application.start()
+    registerControllers(app)
+
+    // Controllers propres à la doc (préfixe doc-), jamais dans le kit.
+
+    // Simule une adresse pour la démo du controller nav, sans quitter la page :
+    // on remplace l'URL un instant, on prévient nav (popstate), puis on remet
+    // la vraie URL. Les clics sur les liens de la démo passent par là aussi.
+    app.register("doc-url", class extends Controller {
+      static targets = ["output"]
+      static values = { path: String }
+
+      connect() {
+        this.onClick = (event) => {
+          const link = event.target.closest("a[href]")
+          if (!link || !this.element.contains(link)) return
+          event.preventDefault()
+          this.show(link.pathname)
+        }
+        this.element.addEventListener("click", this.onClick)
+        // Après la connexion de nav, qui a calculé avec la vraie URL.
+        requestAnimationFrame(() => this.show(this.pathValue))
+      }
+
+      disconnect() {
+        this.element.removeEventListener("click", this.onClick)
+      }
+
+      go({ params: { path } }) {
+        this.show(path)
+      }
+
+      show(path) {
+        const real = location.href
+        history.replaceState(history.state, "", path)
+        window.dispatchEvent(new PopStateEvent("popstate"))
+        history.replaceState(history.state, "", real)
+        this.outputTarget.textContent = path
+      }
+    })
+
+    // Affiche le dernier tabs:change reçu par la démo des onglets.
+    app.register("doc-event", class extends Controller {
+      static targets = ["output"]
+
+      show({ type, detail: { tab, panel, index } }) {
+        const label = tab.firstChild.textContent.trim()
+        this.outputTarget.textContent =
+          `${type} → index: ${index}, tab: « ${label} », panel: #${panel.id}`
+      }
+    })
   </script>
 
   <!-- Styles propres à la page de doc uniquement (préfixe .doc-) -->
@@ -89,6 +139,24 @@
     .doc-demo {
       padding: var(--sp-5);
       background: var(--paper);
+    }
+    /* Barre au-dessus d'une démo : fausse adresse (nav), dernier événement (tabs) */
+    .doc-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-3) var(--sp-5);
+      border-bottom: 1px solid var(--line);
+      font-size: var(--fs-sm);
+    }
+    .doc-bar output {
+      flex: 1 1 200px;
+      padding: var(--sp-1) var(--sp-3);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      font-family: var(--mono);
     }
     .doc-code {
       position: relative;
@@ -534,13 +602,29 @@
           ce qui fonctionne aussi avec une navbar en <code>data-turbo-permanent</code>. Sur mobile,
           quand les liens défilent, le lien actif est centré dans la barre.
         </p>
-        <div class="doc-example">
-          <div class="doc-code" data-raw>
-<pre>&lt;nav class="navbar-links" data-controller="nav"&gt;
-  &lt;a href="/"&gt;Accueil&lt;/a&gt;
-  &lt;a href="/prospects" data-nav-match="prefix"&gt;Prospects&lt;/a&gt;
-  &lt;a href="/factures" data-nav-match="prefix"&gt;Factures&lt;/a&gt;
-&lt;/nav&gt;</pre>
+        <p class="text-muted">
+          Essayez : choisissez une adresse ou cliquez sur un lien de la navbar. La barre
+          d'adresse est simulée, la page ne change pas.
+        </p>
+        <div class="doc-example" data-controller="doc-url" data-doc-url-path-value="/prospects/12">
+          <div class="doc-bar">
+            <output data-doc-url-target="output"></output>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="doc-url#go" data-doc-url-path-param="/">/</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="doc-url#go" data-doc-url-path-param="/prospects/12">/prospects/12</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="doc-url#go" data-doc-url-path-param="/prospectsX">/prospectsX</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="doc-url#go" data-doc-url-path-param="/factures/">/factures/</button>
+          </div>
+          <div class="doc-demo" style="padding: 0">
+<header class="navbar" style="position: static">
+  <div class="container">
+    <strong>Dashboard</strong>
+    <nav class="navbar-links" data-controller="nav">
+      <a href="/">Accueil</a>
+      <a href="/prospects" data-nav-match="prefix">Prospects</a>
+      <a href="/factures" data-nav-match="prefix">Factures</a>
+    </nav>
+  </div>
+</header>
           </div>
         </div>
 
@@ -1251,7 +1335,10 @@
           flèches gauche et droite changent d'onglet, Début et Fin vont au premier et au dernier,
           et Tab passe au contenu du panneau.
         </p>
-        <div class="doc-example">
+        <div class="doc-example" data-controller="doc-event" data-action="tabs:change->doc-event#show">
+          <div class="doc-bar">
+            <output data-doc-event-target="output">Changez d'onglet pour voir l'événement tabs:change.</output>
+          </div>
           <div class="doc-demo">
 <div data-controller="tabs">
   <div class="tabs" role="tablist" aria-label="Fiche client">
@@ -1296,7 +1383,23 @@
         <p class="text-muted">
           Une <code>&lt;turbo-frame loading="lazy"&gt;</code> dans un panneau ne se charge qu'à
           l'ouverture de l'onglet, sans code en plus. Pour autre chose, le controller envoie
-          l'événement <code>tabs:change</code> avec l'onglet, le panneau et son index.
+          l'événement <code>tabs:change</code> avec l'onglet, le panneau et son index (la
+          barre au-dessus de la première démo l'affiche en direct). Un controller du projet
+          l'écoute avec <code>data-action</code> :
+        </p>
+        <div class="doc-example">
+          <div class="doc-code" data-raw>
+<pre>&lt;div data-controller="tabs factures" data-action="tabs:change-&gt;factures#load"&gt;</pre>
+          </div>
+          <div class="doc-code" data-raw>
+<pre>// factures_controller.js
+load({ detail: { tab, panel, index } }) {
+  if (index === 1) this.refresh(panel)
+}</pre>
+          </div>
+        </div>
+        <p class="text-muted">
+          Pour un panneau qui se charge tout seul, une turbo-frame suffit :
         </p>
         <div class="doc-example">
           <div class="doc-code" data-raw>
