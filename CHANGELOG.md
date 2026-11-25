@@ -3,6 +3,12 @@
 Toutes les évolutions du kit, de la plus récente à la plus ancienne.
 Numérotation : voir la section « Versions » du [README](README.md#versions).
 
+## [1.4.0] — 2026-11-25
+
+### Ajouté
+- Utilitaire `.text-pre-line` : garde les retours à la ligne d'un texte saisi
+  (notes, commentaires).
+
 ## [1.3.0] — 2026-11-25
 
 Passe de finition visuelle. Aucune classe n'est renommée ni supprimée, mais le rendu

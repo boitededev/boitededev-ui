@@ -264,7 +264,7 @@
         <h3>Installation : CSS seul</h3>
         <div class="doc-example">
           <div class="doc-code" data-raw>
-            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/css/style.css"&gt;</pre>
+            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.4.0/css/style.css"&gt;</pre>
           </div>
         </div>
 
@@ -279,7 +279,7 @@
 {
   "imports": {
     "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js",
-    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/js/index.js"
+    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.4.0/js/index.js"
   }
 }
 &lt;/script&gt;
@@ -640,7 +640,7 @@
         <div class="doc-example">
           <div class="doc-demo">
 <div class="row">
-  <span class="tag">v1.3.0</span>
+  <span class="tag">v1.4.0</span>
   <span class="tag">GET /prospects</span>
 </div>
           </div>
@@ -1449,7 +1449,7 @@
               <tr><td>Paddings</td><td><code>.p-*</code> <code>.px-*</code> <code>.py-*</code> <code>.pt-*</code> <code>.pb-*</code> <code>.pl-*</code> <code>.pr-*</code></td></tr>
               <tr><td>Gaps</td><td><code>.gap-1/2/4/6</code></td></tr>
               <tr><td>Flex</td><td><code>.items-start/center/end</code> <code>.justify-between/center/end</code> <code>.flex-1</code></td></tr>
-              <tr><td>Texte</td><td><code>.text-left/center/right</code> <code>.text-xs/sm/lg</code> <code>.text-mono</code> <code>.text-bold</code></td></tr>
+              <tr><td>Texte</td><td><code>.text-left/center/right</code> <code>.text-xs/sm/lg</code> <code>.text-mono</code> <code>.text-bold</code> <code>.text-pre-line</code></td></tr>
               <tr><td>Couleurs</td><td><code>.text-muted/ink/sky/success/danger</code></td></tr>
               <tr><td>Fonds</td><td><code>.bg-white/paper/ink/sky-soft</code></td></tr>
               <tr><td>Bordures</td><td><code>.border</code> <code>.rounded</code> <code>.rounded-lg</code> <code>.shadow</code></td></tr>
@@ -1492,6 +1492,20 @@
 <div class="bg-sky-soft rounded p-4 mt-4" style="width: 50%">
   <div class="bg-white rounded p-2 mx-auto" style="width: 60%">.mx-auto (centré)</div>
 </div>
+          </div>
+        </div>
+
+        <h3>Retours à la ligne</h3>
+        <p class="text-muted">
+          Par défaut, le navigateur ignore les retours à la ligne d'un texte saisi
+          (notes, commentaires…). <code>.text-pre-line</code> les garde, et les lignes
+          trop longues passent quand même à la ligne.
+        </p>
+        <div class="doc-example">
+          <div class="doc-demo">
+<p class="text-pre-line bg-white border rounded p-4">Rappeler mardi.
+Intéressé par la refonte du site.
+Budget à confirmer.</p>
           </div>
         </div>
 

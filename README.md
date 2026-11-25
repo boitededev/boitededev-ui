@@ -20,13 +20,13 @@ Documentation : https://boitededev.github.io/boitededev-ui/docs.html
 ## Installation
 
 Les fichiers sont servis par le CDN [jsDelivr](https://www.jsdelivr.com/), directement
-depuis ce dépôt. **Toujours indiquer une version précise** (`@v1.3.0`) : le site ne
+depuis ce dépôt. **Toujours indiquer une version précise** (`@v1.4.0`) : le site ne
 changera pas tout seul le jour où une nouvelle version sort.
 
 ### CSS seul
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.4.0/css/style.css">
 ```
 
 ### Avec les controllers JS
@@ -39,7 +39,7 @@ jamais deux versions de Stimulus chargées en même temps.
 {
   "imports": {
     "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js",
-    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/js/index.js"
+    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.4.0/js/index.js"
   }
 }
 </script>
@@ -76,7 +76,7 @@ L'idée est de mettre le numéro de version à un seul endroit du projet.
 ### Go (templ)
 
 ```go
-const uiVersion = "v1.3.0"
+const uiVersion = "v1.4.0"
 ```
 
 ```templ
@@ -86,7 +86,7 @@ const uiVersion = "v1.3.0"
 ### PHP
 
 ```php
-<?php $uiVersion = 'v1.3.0'; ?>
+<?php $uiVersion = 'v1.4.0'; ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@<?= $uiVersion ?>/css/style.css">
 ```
 
@@ -94,14 +94,14 @@ const uiVersion = "v1.3.0"
 
 ```python
 # Côté Python : rendre la version disponible dans tous les templates
-app.jinja_env.globals["ui_version"] = "v1.3.0"   # Flask
+app.jinja_env.globals["ui_version"] = "v1.4.0"   # Flask
 ```
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@{{ ui_version }}/css/style.css">
 ```
 
-Pour l'importmap, même principe : remplacer `v1.3.0` par la variable.
+Pour l'importmap, même principe : remplacer `v1.4.0` par la variable.
 
 ## Composants
 
@@ -133,7 +133,7 @@ Toutes les valeurs (couleurs, espacements, rayons…) sont des variables CSS sur
 Pour changer le thème d'un projet, on les redéfinit après avoir chargé le kit :
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.4.0/css/style.css">
 <style>
   :root {
     --sky: #16a34a;

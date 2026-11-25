@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BOITE DE DEV UI — v1.3.0
+   BOITE DE DEV UI — v1.4.0
    Mini CSS framework. Docs: docs.html — Changelog: CHANGELOG.md
    --------------------------------------------------------------------------
    Contents
@@ -1592,6 +1592,7 @@ a.page-link:hover {
 .text-lg  { font-size: var(--fs-lg); }
 .text-mono { font-family: var(--mono); }
 .text-bold { font-weight: 600; }
+.text-pre-line { white-space: pre-line; } /* keeps the line breaks typed in the text */
 .text-muted { color: var(--muted); }
 .text-white { color: var(--white); }
 .text-ink   { color: var(--ink); }
