@@ -3,6 +3,37 @@
 Toutes les évolutions du kit, de la plus récente à la plus ancienne.
 Numérotation : voir la section « Versions » du [README](README.md#versions).
 
+## [1.3.0] — 2026-11-25
+
+Passe de finition visuelle. Aucune classe n'est renommée ni supprimée, mais le rendu
+change : vérifier les écrans après la mise à jour.
+
+### Ajouté
+- Tokens `--radius-control` (10px, boutons), `--line-hover`, `--row-hover` et
+  `--on-dark-muted`, qui remplacent des couleurs écrites en dur.
+
+### Modifié
+- Titres plus légers : h1 et h2 en 600, h3 et h4 en 500 (avant 800 et 700). `.stat-value`
+  passe en 600. Les polices à charger deviennent Bricolage Grotesque 500 et 600, Figtree
+  400, 500 et 600.
+- Graisse de l'interface ramenée à 500 ou 600 : boutons, badges, liens de navbar, onglets,
+  menu, labels de formulaire, alertes, accordéon, pagination. `.text-bold` passe en 600.
+- `.eyebrow` et en-têtes de `.table` en casse normale, sans espacement de lettres.
+- Boutons : coins de 10px au lieu de la pilule (8px pour `.btn-sm`). Plus de lévitation ni
+  de halo bleu au survol ; `.btn-ink` fonce légèrement, léger enfoncement au clic. Hauteurs
+  alignées sur les tokens : 32, 40 et 48px.
+- `--control` passe de 42 à 40px, `--control-lg` de 50 à 48px, `--radius-lg` de 22 à 16px
+  (cards, tables, modals).
+- Champs de formulaire : bordure de 1px, hauteur 40px comme les boutons.
+- `.page-link` : coins de 8px au lieu de la pilule.
+- `.hl` : surlignage d'une seule teinte au lieu d'un dégradé.
+- Espacements internes ramenés sur la grille de 4px (badges, chips, tags, alertes,
+  accordéon, lien d'évitement).
+- `.reveal` : apparition plus courte (12px, 0,45 s).
+
+### Corrigé
+- `.text-white` donnait du bleu clair (`--sky-soft`) au lieu du blanc.
+
 ## [1.2.0] — 2026-11-23
 
 ### Ajouté

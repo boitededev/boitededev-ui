@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
 
@@ -52,15 +52,13 @@
     .doc-toc strong {
       margin: var(--sp-4) 0 var(--sp-1);
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       color: var(--muted);
     }
     .doc-toc strong:first-child { margin-top: 0; }
     .doc-toc a {
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: var(--radius-sm);
       color: var(--ink-2);
       text-decoration: none;
@@ -112,7 +110,7 @@
       right: 10px;
       padding: 4px 10px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: var(--radius-pill);
+      border-radius: var(--radius-sm);
       background: transparent;
       color: #c9d3df;
       font-family: var(--mono);
@@ -139,7 +137,7 @@
     .doc-swatch > span { display: block; height: 56px; }
     .doc-swatch code {
       display: block;
-      padding: 8px 10px;
+      padding: 8px 12px;
       background: none;
       color: var(--ink-2);
     }
@@ -148,7 +146,7 @@
     .doc-space { display: grid; gap: 8px; margin-top: var(--sp-4); }
     .doc-space div {
       display: grid;
-      grid-template-columns: 70px 50px 1fr;
+      grid-template-columns: 72px 48px 1fr;
       align-items: center;
       gap: 12px;
       font-size: 13px;
@@ -162,7 +160,7 @@
 
     /* Boîtes de démo pour layout */
     .doc-box {
-      padding: 14px;
+      padding: 16px;
       border-radius: var(--radius-sm);
       background: var(--sky-soft);
       color: var(--sky-deep);
@@ -266,7 +264,7 @@
         <h3>Installation : CSS seul</h3>
         <div class="doc-example">
           <div class="doc-code" data-raw>
-            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.2.0/css/style.css"&gt;</pre>
+            <pre>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/css/style.css"&gt;</pre>
           </div>
         </div>
 
@@ -281,7 +279,7 @@
 {
   "imports": {
     "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.1/dist/stimulus.js",
-    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.2.0/js/index.js"
+    "boitededev-ui": "https://cdn.jsdelivr.net/gh/boitededev/boitededev-ui@v1.3.0/js/index.js"
   }
 }
 &lt;/script&gt;
@@ -316,7 +314,7 @@
         <p>Chaque token s'utilise avec <code>var(--nom)</code>.</p>
 
         <h3>Neutres</h3>
-        <div class="doc-swatches" data-swatches="ink ink-2 muted line line-strong paper white overlay"></div>
+        <div class="doc-swatches" data-swatches="ink ink-2 muted line line-strong line-hover row-hover on-dark-muted paper white overlay"></div>
 
         <h3>Marque</h3>
         <div class="doc-swatches" data-swatches="sky sky-deep sky-soft beam-1 beam-2"></div>
@@ -330,6 +328,7 @@
         <h3>Rayons &amp; ombres</h3>
         <div class="grid grid-4">
           <div class="doc-box" style="border-radius: var(--radius-sm)">--radius-sm</div>
+          <div class="doc-box" style="border-radius: var(--radius-control)">--radius-control</div>
           <div class="doc-box" style="border-radius: var(--radius)">--radius</div>
           <div class="doc-box" style="border-radius: var(--radius-lg)">--radius-lg</div>
           <div class="doc-box" style="border-radius: var(--radius-pill)">--radius-pill</div>
@@ -340,7 +339,7 @@
 
         <h3>Tailles de contrôles</h3>
         <p>
-          <code>--control-sm</code> (32px), <code>--control</code> (42px), <code>--control-lg</code> (50px)
+          <code>--control-sm</code> (32px), <code>--control</code> (40px), <code>--control-lg</code> (48px)
           pour les boutons carrés <code>.btn-icon</code> ; <code>--icon-box</code> (40px) pour la pastille <code>.icon-box</code>.
         </p>
       </section>
@@ -641,7 +640,7 @@
         <div class="doc-example">
           <div class="doc-demo">
 <div class="row">
-  <span class="tag">v1.2.0</span>
+  <span class="tag">v1.3.0</span>
   <span class="tag">GET /prospects</span>
 </div>
           </div>
@@ -1524,8 +1523,9 @@
         </ul>
         <div class="doc-example">
           <div class="doc-demo">
-<button class="btn btn-ghost btn-sm">
-  ✕ <span class="sr-only">Supprimer le prospect</span>
+<button class="btn btn-ghost btn-icon btn-sm">
+  <span class="icon icon-x" aria-hidden="true"></span>
+  <span class="sr-only">Supprimer le prospect</span>
 </button>
           </div>
         </div>
